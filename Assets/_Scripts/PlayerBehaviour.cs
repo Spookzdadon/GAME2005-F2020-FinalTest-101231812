@@ -15,6 +15,7 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Movement")]
     public float speed;
     public bool isGrounded;
+    public Vector3 velocity;
 
 
     public RigidBody3D body;
@@ -35,41 +36,44 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void _Move()
     {
+        velocity = Vector3.zero;
+
+        if (Input.GetAxisRaw("Horizontal") > 0.0f)
+        {
+            // move right
+            velocity += playerCam.transform.right * speed * Time.deltaTime;
+        }
+
+        else if (Input.GetAxisRaw("Horizontal") < 0.0f)
+        {
+            // move left
+            velocity += -playerCam.transform.right * speed * Time.deltaTime;
+        }
+
+        if (Input.GetAxisRaw("Vertical") > 0.0f)
+        {
+            // move forward
+            velocity += playerCam.transform.forward * speed * Time.deltaTime;
+        }
+
+        else if (Input.GetAxisRaw("Vertical") < 0.0f)
+        {
+            // move Back
+            velocity += -playerCam.transform.forward * speed * Time.deltaTime;
+        }
+
+
+
         if (isGrounded)
         {
-            if (Input.GetAxisRaw("Horizontal") > 0.0f)
-            {
-                // move right
-                body.velocity = playerCam.transform.right * speed * Time.deltaTime;
-            }
-
-            if (Input.GetAxisRaw("Horizontal") < 0.0f)
-            {
-                // move left
-                body.velocity = -playerCam.transform.right * speed * Time.deltaTime;
-            }
-
-            if (Input.GetAxisRaw("Vertical") > 0.0f)
-            {
-                // move forward
-                body.velocity = playerCam.transform.forward * speed * Time.deltaTime;
-            }
-
-            if (Input.GetAxisRaw("Vertical") < 0.0f) 
-            {
-                // move Back
-                body.velocity = -playerCam.transform.forward * speed * Time.deltaTime;
-            }
-
             body.velocity = Vector3.Lerp(body.velocity, Vector3.zero, 0.9f);
-            body.velocity = new Vector3(body.velocity.x, 0.0f, body.velocity.z); // remove y
-            
+            velocity = new Vector3(velocity.x, 0.0f, velocity.z); // remove y
 
             if (Input.GetAxisRaw("Jump") > 0.0f)
             {
-                body.velocity = transform.up * speed * 0.1f * Time.deltaTime;
+                velocity += transform.up * speed * 0.8f * Time.deltaTime;
             }
-
+            body.velocity = velocity;
             transform.position += body.velocity;
         }
     }

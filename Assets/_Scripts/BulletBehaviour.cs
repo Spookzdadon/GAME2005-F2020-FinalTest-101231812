@@ -13,12 +13,18 @@ public class BulletBehaviour : MonoBehaviour
     public bool isColliding;
     public Vector3 collisionNormal;
     public float penetration;
+    public Vector3 max;
+    public Vector3 min;
+    public Bounds bounds;
+    private MeshFilter meshFilter;
 
     public BulletManager bulletManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        meshFilter = GetComponent<MeshFilter>();
+        bounds = meshFilter.mesh.bounds;
         isColliding = false;
         radius = Mathf.Max(transform.localScale.x, transform.localScale.y, transform.localScale.z) * 0.5f;
         bulletManager = FindObjectOfType<BulletManager>();
@@ -29,6 +35,8 @@ public class BulletBehaviour : MonoBehaviour
     {
         _Move();
         _CheckBounds();
+        max = Vector3.Scale(bounds.max, transform.localScale) + transform.position;
+        min = Vector3.Scale(bounds.min, transform.localScale) + transform.position;
     }
 
     private void _Move()
